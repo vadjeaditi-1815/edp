@@ -1,7 +1,6 @@
 import pandas as pd
 import os
 
-# List of stocks
 stocks = [
     "AAPL",
     "MSFT",
@@ -17,7 +16,6 @@ for stock in stocks:
 
     print("Processing:", stock)
 
-    # Load stock data
     file_path = f"data/{stock}.csv"
 
     df = pd.read_csv(file_path)
@@ -25,7 +23,7 @@ for stock in stocks:
     # Add stock name
     df["Stock"] = stock
 
-    # Convert columns to numeric
+    # Convert numeric columns
     numeric_columns = [
         "Open",
         "High",
@@ -42,33 +40,23 @@ for stock in stocks:
                 errors="coerce"
             )
 
-    # -------------------------
-    # FEATURE 1: Daily Return
-    # -------------------------
+    # Daily return
     df["Daily_Return"] = df["Close"].pct_change()
 
-    # -------------------------
-    # FEATURE 2: Price Range
-    # -------------------------
+    # Price range
     df["Price_Range"] = df["High"] - df["Low"]
 
-    # -------------------------
-    # FEATURE 3: 10-Day Moving Average
-    # -------------------------
+    # 10-day moving average
     df["SMA_10"] = df["Close"].rolling(
         window=10
     ).mean()
 
-    # -------------------------
-    # FEATURE 4: 20-Day Moving Average
-    # -------------------------
+    # 20-day moving average
     df["SMA_20"] = df["Close"].rolling(
         window=20
     ).mean()
 
-    # -------------------------
-    # FEATURE 5: Volatility
-    # -------------------------
+    # Volatility
     df["Volatility"] = df["Daily_Return"].rolling(
         window=10
     ).std()
@@ -76,8 +64,8 @@ for stock in stocks:
     # Remove missing values
     df.dropna(inplace=True)
 
-    # Add to list
     all_data.append(df)
+
 
 # Combine all companies
 final_data = pd.concat(
@@ -85,7 +73,7 @@ final_data = pd.concat(
     ignore_index=True
 )
 
-# Create data folder if necessary
+# Create data folder
 os.makedirs("data", exist_ok=True)
 
 # Save prepared dataset
@@ -96,11 +84,11 @@ final_data.to_csv(
 
 print("\nFeature engineering completed!")
 
-print("\nFinal dataset shape:")
+print("\nDataset shape:")
 print(final_data.shape)
 
-print("\nFinal columns:")
-print(final_data.columns)
+print("\nColumns:")
+print(final_data.columns.tolist())
 
 print("\nFirst 5 rows:")
 print(final_data.head())
